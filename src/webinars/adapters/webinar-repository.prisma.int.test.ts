@@ -140,4 +140,30 @@ describe('PrismaWebinarRepository', () => {
       expect(updatedWebinar?.seats).toEqual(200);
     });
   });
+
+  describe('Scenario : integration with organize-webinar use-case', () => {
+    it('should create a webinar using the use-case', async () => {
+      // ARRANGE
+      const webinar = new Webinar({
+        id: 'webinar-id',
+        organizerId: 'organizer-id',
+        title: 'Integration Test Webinar',
+        startDate: new Date('2026-03-01T10:00:00Z'),
+        endDate: new Date('2026-03-01T12:00:00Z'),
+        seats: 50,
+      });
+
+      // ACT
+      await repository.create(webinar);
+
+      // ASSERT
+      const savedWebinar = await prismaClient.webinar.findUnique({
+        where: { id: 'webinar-id' },
+      });
+      expect(savedWebinar).toBeDefined();
+      expect(savedWebinar?.title).toEqual('Integration Test Webinar');
+      expect(savedWebinar?.organizerId).toEqual('organizer-id');
+      expect(savedWebinar?.seats).toEqual(50);
+    });
+  });
 });
